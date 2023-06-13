@@ -1,0 +1,48 @@
+From 868d06c30e52eb0150c386a4bdfabe194c87560a Mon Sep 17 00:00:00 2001
+From: Jelle Besseling <jelle@bigbridge.nl>
+Date: Thu, 8 Jun 2023 17:27:30 +0200
+Subject: [PATCH] Add option to show output on error
+
+---
+ spin/command.go |  5 +++++
+ spin/options.go | 13 +++++++------
+ 2 files changed, 12 insertions(+), 6 deletions(-)
+
+diff --git a/spin/command.go b/spin/command.go
+index 46ca5d59..1f070c41 100644
+--- a/spin/command.go
++++ b/spin/command.go
+@@ -32,6 +32,11 @@ func (o Options) Run() error {
+ 		return fmt.Errorf("failed to run spin: %w", err)
+ 	}
+ 
++	if o.OutputOnError && m.status != 0 {
++		fmt.Fprint(os.Stdout, m.stdout)
++		fmt.Fprint(os.Stderr, m.stderr)
++	}
++
+ 	if o.ShowOutput {
+ 		fmt.Fprint(os.Stdout, m.stdout)
+ 		fmt.Fprint(os.Stderr, m.stderr)
+diff --git a/spin/options.go b/spin/options.go
+index 920e788b..0cf7711a 100644
+--- a/spin/options.go
++++ b/spin/options.go
+@@ -6,10 +6,11 @@ import "github.com/charmbracelet/gum/style"
+ type Options struct {
+ 	Command []string `arg:"" help:"Command to run"`
+ 
+-	ShowOutput   bool         `help:"Show output of command" default:"false" env:"GUM_SPIN_SHOW_OUTPUT"`
+-	Spinner      string       `help:"Spinner type" short:"s" type:"spinner" enum:"line,dot,minidot,jump,pulse,points,globe,moon,monkey,meter,hamburger" default:"dot" env:"GUM_SPIN_SPINNER"`
+-	SpinnerStyle style.Styles `embed:"" prefix:"spinner." set:"defaultForeground=212" envprefix:"GUM_SPIN_SPINNER_"`
+-	Title        string       `help:"Text to display to user while spinning" default:"Loading..." env:"GUM_SPIN_TITLE"`
+-	TitleStyle   style.Styles `embed:"" prefix:"title." envprefix:"GUM_SPIN_TITLE_"`
+-	Align        string       `help:"Alignment of spinner with regard to the title" short:"a" type:"align" enum:"left,right" default:"left" env:"GUM_SPIN_ALIGN"`
++	ShowOutput    bool         `help:"Show output of command" default:"false" env:"GUM_SPIN_SHOW_OUTPUT"`
++	OutputOnError bool         `help:"Show output of command if it fails" default:"false" env:"GUM_SPIN_OUTPUT_ON_ERROR"`
++	Spinner       string       `help:"Spinner type" short:"s" type:"spinner" enum:"line,dot,minidot,jump,pulse,points,globe,moon,monkey,meter,hamburger" default:"dot" env:"GUM_SPIN_SPINNER"`
++	SpinnerStyle  style.Styles `embed:"" prefix:"spinner." set:"defaultForeground=212" envprefix:"GUM_SPIN_SPINNER_"`
++	Title         string       `help:"Text to display to user while spinning" default:"Loading..." env:"GUM_SPIN_TITLE"`
++	TitleStyle    style.Styles `embed:"" prefix:"title." envprefix:"GUM_SPIN_TITLE_"`
++	Align         string       `help:"Alignment of spinner with regard to the title" short:"a" type:"align" enum:"left,right" default:"left" env:"GUM_SPIN_ALIGN"`
+ }
