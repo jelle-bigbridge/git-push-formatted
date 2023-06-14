@@ -1,5 +1,5 @@
 def has-prettier [] {
-  not (open --raw package.json | from json | get --ignore-errors scripts.prettier | is-empty)
+  not (do -i { open --raw package.json } | from json | get --ignore-errors scripts.prettier | is-empty)
 }
 
 let localChanges = if (git stash push -m "git-push-formatted") == "No local changes to save" {
@@ -22,4 +22,4 @@ if $localChanges {
   git stash pop
 }
 
-git push
+git push --force-with-lease

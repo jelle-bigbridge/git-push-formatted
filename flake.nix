@@ -49,7 +49,10 @@
       git-push-formatted = pkgs.symlinkJoin {
         name = "git-push-formatted";
         nativeBuildInputs = [ pkgs.makeWrapper ];
-        paths = [ (writeNuScript "git-push-formatted" (builtins.readFile ./git-push-formatted.nu)) ];
+        paths = [
+          pkgs.gitAndTools.git-absorb
+          (writeNuScript "git-push-formatted" (builtins.readFile ./git-push-formatted.nu))
+        ];
 
         postBuild =
           let
