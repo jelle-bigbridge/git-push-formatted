@@ -1,3 +1,6 @@
+# Go to repo root
+cd (git rev-parse --show-toplevel)
+
 def has-prettier [] {
   not (do -i { open --raw package.json } | from json | get --ignore-errors scripts.prettier | is-empty)
 }
